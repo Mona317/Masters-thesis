@@ -3,17 +3,17 @@ import custom_graph
 
 
 # Helper function to save a graph in the correct folder depending on its properties
-def save_graph(graph, with_plot=False):
-    c_5_number = len(graph.nodes()) // 5
+def save_graph(graph, nodes_per_cycle, with_plot=False):
+    cycle_number = len(graph.nodes()) // nodes_per_cycle
     edges = str(graph.edge_numbers[0])
     for edge_number in graph.edge_numbers[1:]:
         edges += '_' + str(edge_number)
 
-    path_name = 'results/c5s/' + str(c_5_number) + '_c5s/' + str(edges) + '_connecting_edges/' + graph.name + '.pkl'
+    path_name = 'results/c' + str(nodes_per_cycle) + 's/' + str(cycle_number) + '_c' + str(nodes_per_cycle) + 's/' + str(edges) + '_connecting_edges/' + graph.name + '.pkl'
     graph.save_to_pickle(path_name)
 
     if with_plot:
-        path_name_plot = 'results/c5s/' + str(c_5_number) + '_c5s/' + str(edges) + '_connecting_edges_plots/' + graph.name + '.png'
+        path_name_plot = 'results/c' + str(nodes_per_cycle) + 's/' + str(cycle_number) + '_c' + str(nodes_per_cycle) + 's/' + str(edges) + '_connecting_edges_plots/' + graph.name + '.png'
         graph.draw_and_save(path_name_plot, graph.possible_precolorings[0])
 
 

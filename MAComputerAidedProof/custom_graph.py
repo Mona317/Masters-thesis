@@ -20,6 +20,22 @@ class CustomGraph(nx.Graph):
     def has_triangle(self):
         return any(nx.triangles(self).values())
 
+    # Determines whether the graph contains an induced diamond
+    def has_diamond(self):
+        diamond = nx.diamond_graph()
+        gm = isomorphism.GraphMatcher(self, diamond)
+        has_a_diamond = gm.subgraph_is_isomorphic()
+
+        return has_a_diamond
+
+    # Determines whether the graph contains a K4
+    def has_k4(self):
+        k4 = nx.complete_graph(4)
+        gm = isomorphism.GraphMatcher(self, k4)
+        has_a_k4 = gm.subgraph_is_isomorphic()
+
+        return has_a_k4
+
     # Determines whether the graph contains an induced path of length 6
     def has_induced_p6(self):
         p6 = nx.path_graph(6)
@@ -31,6 +47,10 @@ class CustomGraph(nx.Graph):
     # Determines whether the graph is (P6, triangle)-free
     def is_p6_triangle_free(self):
         return not self.has_triangle() and not self.has_induced_p6()
+
+    # Determines whether the graph is (P6, diamond, K4)-free
+    def is_p6_diamond_k4_free(self):
+        return not self.has_induced_p6() and not self.has_diamond() and not self.has_k4()
 
     # Groups the nodes by the first character of their name and returns them in a dictionary
     def get_nodes_by_initial(self):
@@ -49,23 +69,23 @@ class CustomGraph(nx.Graph):
                 return False
         return True
 
-    # Determines, whether applying the precoloring to the graph and updating all color lists decomposes the last C5 in the graph.
-    def decomposed_by_precoloring(self, precoloring):
+    # Determines, whether applying the precoloring to the graph and updating all color lists decomposes the last cycle in the graph.
+    def decomposed_by_precoloring(self, precoloring, nodes_per_cycle):
         new_color_lists = {node: [1, 2, 3] for node in self.nodes()}
         color_lists = gc.precolor(self, new_color_lists, precoloring)
         coloring = gc.get_coloring_from_color_lists(color_lists)
 
-        if self.number_of_nodes() - 5 < len(coloring) or len(coloring) == 0:
+        if self.number_of_nodes() - nodes_per_cycle < len(coloring) or len(coloring) == 0:
             return True, coloring
         return False, coloring
 
     # Determines, whether applying the precoloring to the graph and updating all color lists while regarding the color restriction, decomposes the last C5 in the graph.
-    def decomposed_by_precoloring_with_color_restriction(self, precoloring):
+    def decomposed_by_precoloring_with_color_restriction(self, precoloring, nodes_per_cycle):
         new_color_lists = {node: [1, 2, 3] for node in self.nodes()}
         color_lists = gc.precolor_with_color_restriction(self, new_color_lists, precoloring)
         coloring = gc.get_coloring_from_color_lists(color_lists)
 
-        if self.number_of_nodes() - 5 < len(coloring) or len(coloring) == 0:
+        if self.number_of_nodes() - nodes_per_cycle < len(coloring) or len(coloring) == 0:
             return True, coloring
         return False, coloring
 

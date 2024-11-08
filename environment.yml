@@ -1,4 +1,4 @@
-name: masterarbeit_env
+name: masterarbeit_mbreinig_env
 channels:
   - defaults
 dependencies:
